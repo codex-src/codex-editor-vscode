@@ -16,11 +16,6 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 	// DO NOT EDIT
 	constructor(private readonly context: vscode.ExtensionContext) {}
 
-	/**
-	 * Called when our custom editor is opened.
-	 *
-	 *
-	 */
 	public async resolveCustomTextEditor(
 		document: vscode.TextDocument,
 		webviewPanel: vscode.WebviewPanel,
@@ -99,20 +94,6 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 			</html>`
 		)
 	}
-
-	// // Commits an editing operation; overwrites the document.
-	// private commitEdit(document: vscode.TextDocument, text: string) {
-	// 	const edit = new vscode.WorkspaceEdit()
-	// 	edit.replace(
-	// 		document.uri,
-	// 		// NOTE: Overwrites the document; the third parameter,
-	// 		// endLine, is zero-based, so a 0-count overwrites the
-	// 		// document
-	// 		new vscode.Range(0, 0, document.lineCount, 0),
-	// 		text,
-	// 	)
-	// 	vscode.workspace.applyEdit(edit)
-	// }
 }
 
 export default EditorProvider
