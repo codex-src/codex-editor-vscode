@@ -46,7 +46,8 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 		}
 		webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview)
 
-		function updateWebview() {
+		// Broadcasts state changes to other editors.
+		const broadcastStateChanges = () => {
 			webviewPanel.webview.postMessage({
 				type: "update",
 				text: document.getText(),
@@ -63,7 +64,7 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 
 		const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
 			if (e.document.uri.toString() === document.uri.toString()) {
-				updateWebview()
+				broadcastStateChanges()
 			}
 		})
 
@@ -72,41 +73,32 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 			changeDocumentSubscription.dispose()
 		})
 
-		// case "add":
-		// 	this.addNewScratch(document)
-		// 	return
-		// case "delete":
-		// 	this.deleteScratch(document, e.id)
-		// 	return
-
 		// Receive message from the webview.
 		webviewPanel.webview.onDidReceiveMessage(e => {
 			switch (e.type) {
 			case "edit":
-				// TODO: console.log return?
-				this.commitEdit(document)
+				this.editOperation(document, e.text)
 				return
 			}
 		})
 
-		updateWebview()
+		broadcastStateChanges()
 	}
 
 	/**
 	 * Get the static html used for the editor webviews.
 	 */
 	private getHtmlForWebview(webview: vscode.Webview): string {
-		// Local path to script and css for the webview
-		const scriptUri = webview.asWebviewUri(vscode.Uri.file(
+		// Path for JS and CSS to interpolate
+		const scriptURI = webview.asWebviewUri(vscode.Uri.file(
 			path.join(this.context.extensionPath, "media", "catScratch.js")
 		))
-		const styleUri = webview.asWebviewUri(vscode.Uri.file(
+		const styleURI = webview.asWebviewUri(vscode.Uri.file(
 			path.join(this.context.extensionPath, "media", "catScratch.css")
 		))
 
 		// Use a nonce to whitelist which scripts can be run
 		const nonce = newNonce()
-
 		return (
 			`<!DOCTYPE html>
 			<html lang="en">
@@ -114,12 +106,12 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 				<meta charset="UTF-8">
 				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource}; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<link href="${styleUri}" rel="stylesheet" />
+				<link href="${styleURI}" rel="stylesheet" />
 				<title>Cat Scratch</title>
 			</head>
 			<body>
 				<textarea></textarea>
-				<script nonce="${nonce}" src="${scriptUri}"></script>
+				<script nonce="${nonce}" src="${scriptURI}"></script>
 			</body>
 			</html>`
 		)
@@ -128,8 +120,8 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 	/**
 	 * Add a new scratch to the current document.
 	 */
-	private commitEdit(document: vscode.TextDocument) {
-		this.updateTextDocument(document, document.getText())
+	private editOperation(document: vscode.TextDocument, text: string) {
+		this.updateTextDocument(document, text)
 	}
 
 	//	/**
@@ -199,8 +191,7 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 	/**
 	 * Write out the json to a given document.
 	 */
-	// TODO: Change any to string
-	private updateTextDocument(document: vscode.TextDocument, data: any) {
+	private updateTextDocument(document: vscode.TextDocument, text: string) {
 		const edit = new vscode.WorkspaceEdit()
 		edit.replace(
 			document.uri,
@@ -210,7 +201,7 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 				document.lineCount, // pos2.y
 				0,                  // pos2.y
 			),
-			data,
+			text,
 		)
 		vscode.workspace.applyEdit(edit)
 	}
