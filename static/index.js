@@ -7,17 +7,19 @@
 	// Sends messages to VSCode.
 	textarea.addEventListener("input", e => {
 		// TODO: postMessage needs to pass data; not cursors
-		const { value, selectionStart, selectionEnd } = e.target
+		// const { value, selectionStart, selectionEnd } = e.target
+		const { value: data } = e.target
 		vscode.postMessage({
 			type: "input",
-			value,
-			selectionStart, // TODO: Remove
-			selectionEnd,   // TODO: Remove
+			data,
 		})
 	})
 
 	// Consumes messages from VSCode.
 	window.addEventListener("message", e => {
+		// NOTE: Destructure e.data
+		const { data } = e.data
+
 		// TODO: Get nodes, pos1, and pos2 here
 		const { selectionStart, selectionEnd } = textarea
 		const resetPos = () => {
@@ -32,11 +34,10 @@
 		// back to the editor to re-render.
 		// TODO (2): Can use syncDOM strategy to mutate affected
 		// nodes
-		const { value } = e.data
-		textarea.value = value
+		textarea.value = data
 		resetPos()
 
-		vscode.setState(value)
+		vscode.setState(data)
 	})
 
 	if (!initialValue) {

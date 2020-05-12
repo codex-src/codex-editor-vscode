@@ -29,13 +29,15 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 		const updateWebview = () => {
 			webviewPanel.webview.postMessage({
 				type: "update",
-				value: document.getText(), // TODO: Change value to data or text
+				data: document.getText(),
 			})
 		}
 
 		// Converts messages passed from the editor to VSCode;
 		// events are converted from messages to edits.
 		webviewPanel.webview.onDidReceiveMessage(e => {
+			const { data } = e
+
 			// TODO: The editor can pass VDOM representation here,
 			// use state.data to write to edit.replace, and
 			const edit = new vscode.WorkspaceEdit()
@@ -45,7 +47,7 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 					new vscode.Position(0, 0),
 					new vscode.Position(document.lineCount, 0),
 				),
-				e.value,
+				data,
 			)
 			// // TODO: Add try-catch statement here
 			// isSaving = true
@@ -58,7 +60,6 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 		// Workspace subscription for document changes;
 		// propagates changes to shared documents.
 		const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
-			console.log(document)
 			if (e.document.uri.toString() !== document.uri.toString()) {
 				// No-op
 				return
@@ -75,7 +76,7 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 		updateWebview()
 	}
 
-	// Return static HTML.
+	// ReSturn static HTML.
 	private getHtmlForWebview(webview: vscode.Webview): string {
 		const nonceID = nonce()
 
