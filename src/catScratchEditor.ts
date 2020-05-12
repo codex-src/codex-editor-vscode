@@ -46,8 +46,8 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 		}
 		webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview)
 
-		// Broadcasts state changes to other editors.
-		const broadcastStateChanges = () => {
+		// Synchronizes state (text) to other editors.
+		const syncState = () => {
 			webviewPanel.webview.postMessage({
 				type: "update",
 				text: document.getText(),
@@ -61,11 +61,12 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 		//
 		// Remember that a single text document can also be shared between multiple custom
 		// editors (this happens for example when you split a custom editor)
-
 		const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
-			if (e.document.uri.toString() === document.uri.toString()) {
-				broadcastStateChanges()
+			if (e.document.uri.toString() !== document.uri.toString()) {
+				// No-op
+				return
 			}
+			syncState()
 		})
 
 		// Make sure we get rid of the listener when our editor is closed.
@@ -77,12 +78,13 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 		webviewPanel.webview.onDidReceiveMessage(e => {
 			switch (e.type) {
 			case "edit":
-				this.editOperation(document, e.text)
+				this.commitEdit(document, e.text)
 				return
 			}
 		})
 
-		broadcastStateChanges()
+		// TODO: Can remove; appears to be unneeded
+		// syncState()
 	}
 
 	/**
@@ -117,90 +119,15 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 		)
 	}
 
-	/**
-	 * Add a new scratch to the current document.
-	 */
-	private editOperation(document: vscode.TextDocument, text: string) {
-		this.updateTextDocument(document, text)
-	}
-
-	//	/**
-	//	 * Add a new scratch to the current document.
-	//	 */
-	//	private addNewScratch(document: vscode.TextDocument) {
-	//		const json = this.getDocumentAsJson(document)
-	//		const character = CatScratchEditorProvider.scratchCharacters[Math.floor(Math.random() * CatScratchEditorProvider.scratchCharacters.length)]
-	//		json.scratches = [
-	//			...(Array.isArray(json.scratches) ? json.scratches : []),
-	//			{
-	//				id: newNonce(),
-	//				text: character,
-	//				created: Date.now(),
-	//			}
-	//		]
-	//
-	//		return this.updateTextDocument(document, json)
-	//	}
-	//
-	//	/**
-	//	 * Delete an existing scratch from a document.
-	//	 */
-	//	private deleteScratch(document: vscode.TextDocument, id: string) {
-	//		const json = this.getDocumentAsJson(document)
-	//		if (!Array.isArray(json.scratches)) {
-	//			return
-	//		}
-	//
-	//		json.scratches = json.scratches.filter((note: any) => note.id !== id)
-	//
-	//		return this.updateTextDocument(document, json)
-	//	}
-	//
-	//	/**
-	//	 * Try to get a current document as json text.
-	//	 */
-	//	private getDocumentAsJson(document: vscode.TextDocument): any {
-	//		const text = document.getText()
-	//		if (text.trim().length === 0) {
-	//			return {}
-	//		}
-	//
-	//		try {
-	//			return JSON.parse(text)
-	//		} catch {
-	//			throw new Error("Could not get document as json. Content is not valid json")
-	//		}
-	//	}
-
-	//	/**
-	//	 * Write out the json to a given document.
-	//	 */
-	//	private updateTextDocument(document: vscode.TextDocument, json: any) {
-	//		const edit = new vscode.WorkspaceEdit()
-	//
-	//		// Just replace the entire document every time for this example extension.
-	//		// A more complete extension should compute minimal edits instead.
-	//		edit.replace(
-	//			document.uri,
-	//			new vscode.Range(0, 0, document.lineCount, 0),
-	//			JSON.stringify(json, null, 2))
-	//
-	//		return vscode.workspace.applyEdit(edit)
-	//	}
-
-	/**
-	 * Write out the json to a given document.
-	 */
-	private updateTextDocument(document: vscode.TextDocument, text: string) {
+	// Commits an editing opereation; overwrites the entire
+	// docuemnt.
+	private commitEdit(document: vscode.TextDocument, text: string) {
 		const edit = new vscode.WorkspaceEdit()
 		edit.replace(
 			document.uri,
-			new vscode.Range(     // TODO
-				0,                  // pos1.x
-				0,                  // pos1.y
-				document.lineCount, // pos2.y
-				0,                  // pos2.y
-			),
+			// NOTE: Overwrites the document; the third parameter, endLine, is
+			// zero-based, so a 0-count overwrites the entire document.
+			new vscode.Range(0, 0, document.lineCount, 0),
 			text,
 		)
 		vscode.workspace.applyEdit(edit)
