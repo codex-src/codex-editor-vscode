@@ -1,4 +1,4 @@
-// Generates a nonce ID.
+// Generates a one-off ‘nonce’ ID.
 function nonce(): string {
 	let nonceID = ""
 	const base = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
