@@ -72,10 +72,10 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 		const nonceID = nonce()
 
 		const scriptURI = webview.asWebviewUri(vscode.Uri.file(
-			path.join(this.context.extensionPath, "media", "catScratch.js")
+			path.join(this.context.extensionPath, "static", "index.js")
 		))
 		const styleURI = webview.asWebviewUri(vscode.Uri.file(
-			path.join(this.context.extensionPath, "media", "catScratch.css")
+			path.join(this.context.extensionPath, "static", "index.css")
 		))
 		return (
 			`<!DOCTYPE html>
