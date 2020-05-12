@@ -29,7 +29,7 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 		const updateWebview = () => {
 			webviewPanel.webview.postMessage({
 				type: "update",
-				text: document.getText(),
+				value: document.getText(),
 			})
 		}
 
@@ -57,7 +57,7 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 					new vscode.Position(0, 0),
 					new vscode.Position(document.lineCount, 0),
 				),
-				e.text,
+				e.value,
 			)
 			vscode.workspace.applyEdit(edit)
 		})
@@ -88,8 +88,7 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 				<title>Codex Editor</title>
 			</head>
 			<body>
-				<!-- <textarea></textarea> -->
-				<div contenteditable>hello</div>
+				<textarea></textarea>
 				<script nonce="${nonceID}" src="${scriptURI}"></script>
 			</body>
 			</html>`

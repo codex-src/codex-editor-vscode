@@ -2,33 +2,29 @@
 	const vscode = acquireVsCodeApi()
 	const vscodeState = vscode.getState()
 
-	const contenteditable = document.querySelector("[contenteditable]")
+	const textarea = document.querySelector("textarea")
 
 	// Sends messages to VSCode.
-	contenteditable.addEventListener("input", e => {
-		// console.log("sent a message to vscode")
+	textarea.addEventListener("input", e => {
+		// const { value, selectionStart, selectionEnd } = e.target // Or textarea
 
-		const text = contenteditable.innerHTML // e.target.value
+		const { value } = e.target
 		vscode.postMessage({
 			type: "input",
-			text,
+			value,
 		})
 	})
 
 	// Consumes messages from VSCode.
 	window.addEventListener("message", e => {
-		// console.log("consumed a message from vscode")
-
 		const message = e.data
-		// contenteditable.value = message.text
-		contenteditable.innerHTML = message.text
+		textarea.value = message.value
 		vscode.setState({
-			text: message.text,
+			value: message.value,
 		})
 	})
 
 	if (vscodeState) {
-		// contenteditable.value = vscodeState.text
-		contenteditable.innerHTML = vscodeState.text
+		textarea.value = vscodeState.value
 	}
 })()
