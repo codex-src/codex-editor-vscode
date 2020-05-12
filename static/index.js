@@ -24,11 +24,18 @@
 
 	// Consumes messages from VSCode.
 	window.addEventListener("message", e => {
-		// const { value, selectionStart, selectionEnd } = e.data
-		console.log(e.data.selectionStart, textarea.selectionStart)
+		const { selectionStart, selectionEnd } = textarea
+		const resetPos = () => {
+			Object.assign(textarea, {
+				selectionStart,
+				selectionEnd,
+			})
+		}
 
 		const { value } = e.data
 		textarea.value = value
+		resetPos()
+
 		vscode.setState(value)
 	})
 
