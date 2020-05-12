@@ -1,7 +1,7 @@
 import * as vscode from "vscode"
-import CodexEditorProvider from "./CodexEditorProvider"
+import EditorProvider from "./EditorProvider"
 
+// Regisers extension (uses provider).
 export function activate(context: vscode.ExtensionContext) {
-	// Register our custom editor providers
-	context.subscriptions.push(CodexEditorProvider.register(context))
+	context.subscriptions.push(EditorProvider.register(context))
 }

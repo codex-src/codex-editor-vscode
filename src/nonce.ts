@@ -1,12 +1,11 @@
-// Generates a new nonce ID.
-function newNonce() {
+// Generates a nonce ID.
+function nonce(): string {
+	let nonceID = ""
 	const base = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-
-	let nonce = ""
 	for (let x = 0; x < 32; x++) {
-		nonce += base.charAt(Math.floor(Math.random() * base.length))
+		nonceID += base.charAt(Math.floor(Math.random() * base.length))
 	}
-	return nonce
+	return nonceID
 }
 
-export default newNonce
+export default nonce

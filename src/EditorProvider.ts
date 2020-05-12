@@ -2,12 +2,12 @@ import * as path from "path"
 import * as vscode from "vscode"
 import nonce from "./nonce"
 
-class CodexEditorProvider implements vscode.CustomTextEditorProvider {
+class EditorProvider implements vscode.CustomTextEditorProvider {
 
 	// DO NOT EDIT
 	public static register(context: vscode.ExtensionContext): vscode.Disposable {
-		const provider = new CodexEditorProvider(context)
-		return vscode.window.registerCustomEditorProvider(CodexEditorProvider.viewType, provider)
+		const provider = new EditorProvider(context)
+		return vscode.window.registerCustomEditorProvider(EditorProvider.viewType, provider)
 	}
 
 	// DO NOT EDIT
@@ -74,6 +74,7 @@ class CodexEditorProvider implements vscode.CustomTextEditorProvider {
 	 * Get the static html used for the editor webviews.
 	 */
 	private getHtmlForWebview(webview: vscode.Webview): string {
+		// Path for JS and CSS to interpolate
 		const scriptURI = webview.asWebviewUri(vscode.Uri.file(
 			path.join(this.context.extensionPath, "media", "catScratch.js")
 		))
@@ -115,4 +116,4 @@ class CodexEditorProvider implements vscode.CustomTextEditorProvider {
 	}
 }
 
-export default CodexEditorProvider
+export default EditorProvider
