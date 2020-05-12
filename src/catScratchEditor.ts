@@ -72,16 +72,20 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 			changeDocumentSubscription.dispose()
 		})
 
+		// case "add":
+		// 	this.addNewScratch(document)
+		// 	return
+		// case "delete":
+		// 	this.deleteScratch(document, e.id)
+		// 	return
+
 		// Receive message from the webview.
 		webviewPanel.webview.onDidReceiveMessage(e => {
 			switch (e.type) {
-				case "add":
-					this.addNewScratch(document)
-					return
-
-				case "delete":
-					this.deleteScratch(document, e.id)
-					return
+			case "edit":
+				// TODO: console.log return?
+				this.commitEdit(document)
+				return
 			}
 		})
 
@@ -114,11 +118,7 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 				<title>Cat Scratch</title>
 			</head>
 			<body>
-				<div class="notes">
-					<div class="add-button">
-						<button>Scratch!</button>
-					</div>
-				</div>
+				<textarea></textarea>
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`
@@ -128,64 +128,90 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 	/**
 	 * Add a new scratch to the current document.
 	 */
-	private addNewScratch(document: vscode.TextDocument) {
-		const json = this.getDocumentAsJson(document)
-		const character = CatScratchEditorProvider.scratchCharacters[Math.floor(Math.random() * CatScratchEditorProvider.scratchCharacters.length)]
-		json.scratches = [
-			...(Array.isArray(json.scratches) ? json.scratches : []),
-			{
-				id: newNonce(),
-				text: character,
-				created: Date.now(),
-			}
-		]
-
-		return this.updateTextDocument(document, json)
+	private commitEdit(document: vscode.TextDocument) {
+		this.updateTextDocument(document, document.getText())
 	}
 
-	/**
-	 * Delete an existing scratch from a document.
-	 */
-	private deleteScratch(document: vscode.TextDocument, id: string) {
-		const json = this.getDocumentAsJson(document)
-		if (!Array.isArray(json.scratches)) {
-			return
-		}
+	//	/**
+	//	 * Add a new scratch to the current document.
+	//	 */
+	//	private addNewScratch(document: vscode.TextDocument) {
+	//		const json = this.getDocumentAsJson(document)
+	//		const character = CatScratchEditorProvider.scratchCharacters[Math.floor(Math.random() * CatScratchEditorProvider.scratchCharacters.length)]
+	//		json.scratches = [
+	//			...(Array.isArray(json.scratches) ? json.scratches : []),
+	//			{
+	//				id: newNonce(),
+	//				text: character,
+	//				created: Date.now(),
+	//			}
+	//		]
+	//
+	//		return this.updateTextDocument(document, json)
+	//	}
+	//
+	//	/**
+	//	 * Delete an existing scratch from a document.
+	//	 */
+	//	private deleteScratch(document: vscode.TextDocument, id: string) {
+	//		const json = this.getDocumentAsJson(document)
+	//		if (!Array.isArray(json.scratches)) {
+	//			return
+	//		}
+	//
+	//		json.scratches = json.scratches.filter((note: any) => note.id !== id)
+	//
+	//		return this.updateTextDocument(document, json)
+	//	}
+	//
+	//	/**
+	//	 * Try to get a current document as json text.
+	//	 */
+	//	private getDocumentAsJson(document: vscode.TextDocument): any {
+	//		const text = document.getText()
+	//		if (text.trim().length === 0) {
+	//			return {}
+	//		}
+	//
+	//		try {
+	//			return JSON.parse(text)
+	//		} catch {
+	//			throw new Error("Could not get document as json. Content is not valid json")
+	//		}
+	//	}
 
-		json.scratches = json.scratches.filter((note: any) => note.id !== id)
-
-		return this.updateTextDocument(document, json)
-	}
-
-	/**
-	 * Try to get a current document as json text.
-	 */
-	private getDocumentAsJson(document: vscode.TextDocument): any {
-		const text = document.getText()
-		if (text.trim().length === 0) {
-			return {}
-		}
-
-		try {
-			return JSON.parse(text)
-		} catch {
-			throw new Error("Could not get document as json. Content is not valid json")
-		}
-	}
+	//	/**
+	//	 * Write out the json to a given document.
+	//	 */
+	//	private updateTextDocument(document: vscode.TextDocument, json: any) {
+	//		const edit = new vscode.WorkspaceEdit()
+	//
+	//		// Just replace the entire document every time for this example extension.
+	//		// A more complete extension should compute minimal edits instead.
+	//		edit.replace(
+	//			document.uri,
+	//			new vscode.Range(0, 0, document.lineCount, 0),
+	//			JSON.stringify(json, null, 2))
+	//
+	//		return vscode.workspace.applyEdit(edit)
+	//	}
 
 	/**
 	 * Write out the json to a given document.
 	 */
-	private updateTextDocument(document: vscode.TextDocument, json: any) {
+	// TODO: Change any to string
+	private updateTextDocument(document: vscode.TextDocument, data: any) {
 		const edit = new vscode.WorkspaceEdit()
-
-		// Just replace the entire document every time for this example extension.
-		// A more complete extension should compute minimal edits instead.
 		edit.replace(
 			document.uri,
-			new vscode.Range(0, 0, document.lineCount, 0),
-			JSON.stringify(json, null, 2))
-
-		return vscode.workspace.applyEdit(edit)
+			new vscode.Range(     // TODO
+				0,                  // pos1.x
+				0,                  // pos1.y
+				document.lineCount, // pos2.y
+				0,                  // pos2.y
+			),
+			data,
+		)
+		vscode.workspace.applyEdit(edit)
 	}
 }
