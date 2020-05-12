@@ -1,6 +1,6 @@
 import * as path from "path"
 import * as vscode from "vscode"
-import { getNonce } from "./util"
+import newNonce from "./nonce"
 
 /**
  * Provider for cat scratch editors.
@@ -101,36 +101,30 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 		))
 
 		// Use a nonce to whitelist which scripts can be run
-		const nonce = getNonce()
+		const nonce = newNonce()
 
-		return /* html */`
-			<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
+		return (
+`<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource}; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- REMOVE -->
+	<link href="${styleUri}" rel="stylesheet" />
+	<title>Cat Scratch</title>
+</head>
+<body>
+	<div class="notes">
+		<div class="add-button">
+			<button>Scratch!</button>
+		</div>
+	</div>
 
-				<!--
-				Use a content security policy to only allow loading images from https or from our extension directory,
-				and only allow scripts that have a specific nonce.
-				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource}; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-				<link href="${styleUri}" rel="stylesheet" />
-
-				<title>Cat Scratch</title>
-			</head>
-			<body>
-				<div class="notes">
-					<div class="add-button">
-						<button>Scratch!</button>
-					</div>
-				</div>
-
-				<script nonce="${nonce}" src="${scriptUri}"></script>
-			</body>
-			</html>`
+	<script nonce="${nonce}" src="${scriptUri}"></script>
+</body>
+</html>`
+		)
 	}
 
 	/**
@@ -142,7 +136,7 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 		json.scratches = [
 			...(Array.isArray(json.scratches) ? json.scratches : []),
 			{
-				id: getNonce(),
+				id: newNonce(),
 				text: character,
 				created: Date.now(),
 			}
