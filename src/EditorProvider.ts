@@ -11,7 +11,7 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 	}
 
 	// DO NOT EDIT
-	private static readonly viewType = "catCustoms.catScratch"
+	private static readonly viewType = "codex-v0-1-editor.md"
 
 	// DO NOT EDIT
 	constructor(private readonly context: vscode.ExtensionContext) {}

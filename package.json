@@ -1,7 +1,7 @@
 {
 	"name": "cat-customs",
-	"displayName": "Cat Customs",
-	"description": "Custom Editor API Samples",
+	"displayName": "WYSIWYG markdown editor (getcodex.dev)",
+	"description": "",
 	"version": "0.0.1",
 	"enableProposedApi": false,
 	"publisher": "codex-zaydek",
@@ -12,8 +12,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCustomEditor:catCustoms.catScratch",
-		"onCustomEditor:catCustoms.pawDraw"
+		"onCustomEditor:codex-v0-1-editor.md",
 	],
 	"repository": {
 		"type": "git",
@@ -23,11 +22,11 @@
 	"contributes": {
 		"customEditors": [
 			{
-				"viewType": "catCustoms.catScratch",
-				"displayName": "Cat Scratch",
+				"viewType": "codex-v0-1-editor.md",
+				"displayName": "Codex Editor",
 				"selector": [
 					{
-						"filenamePattern": "*.cscratch"
+						"filenamePattern": "*.md"
 					}
 				]
 			}
