@@ -7,7 +7,6 @@
 	// Sends messages to VSCode.
 	textarea.addEventListener("input", e => {
 		const { value, selectionStart, selectionEnd } = e.target
-		// console.log({ value, selectionStart, selectionEnd })
 		vscode.postMessage({
 			type: "input",
 			value,
@@ -16,20 +15,23 @@
 		})
 	})
 
+	// // Re-render:
+	// Object.assign(textarea, {
+	// 	value,
+	// 	selectionStart,
+	// 	selectionEnd,
+	// })
+
 	// Consumes messages from VSCode.
 	window.addEventListener("message", e => {
-		const { value, selectionStart, selectionEnd } = e.data
+		// const { value, selectionStart, selectionEnd } = e.data
+		console.log(e.data.selectionStart, textarea.selectionStart)
+
+		const { value } = e.data
 		textarea.value = value
-		// // Re-render:
-		// Object.assign(textarea, {
-		// 	value,
-		// 	selectionStart,
-		// 	selectionEnd,
-		// })
 		vscode.setState(value)
 	})
 
-	// FIXME: Use autofocus="true"
 	if (!initialValue) {
 		textarea.focus()
 	} else {

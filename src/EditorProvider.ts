@@ -33,22 +33,8 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 			})
 		}
 
-		// Propagates state to the focused document; VSCode text
-		// editor extensions are managed, so updateWebview
-		// triggers a re-render.
-		const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
-			if (e.document.uri.toString() !== document.uri.toString()) {
-				// No-op
-				return
-			}
-			updateWebview()
-		})
-		// Defer function.
-		webviewPanel.onDidDispose(() => {
-			changeDocumentSubscription.dispose()
-		})
-
-		// Resets the document on state changes.
+		// Converts messages passed from the editor to VSCode;
+		// events are converted from messages to edits.
 		webviewPanel.webview.onDidReceiveMessage(e => {
 			const edit = new vscode.WorkspaceEdit()
 			edit.replace(
@@ -60,6 +46,20 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 				e.value,
 			)
 			vscode.workspace.applyEdit(edit)
+		})
+
+		// Workspace subscription for document changes;
+		// propagates changes to shared editors (based on URI).
+		const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
+			if (e.document.uri.toString() !== document.uri.toString()) {
+				// No-op
+				return
+			}
+			updateWebview()
+		})
+		// Defer function for workspace subscription.
+		webviewPanel.onDidDispose(() => {
+			changeDocumentSubscription.dispose()
 		})
 
 		// Invoke once; propgates state changes to background
