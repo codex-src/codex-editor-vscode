@@ -4,13 +4,16 @@ import newNonce from "./nonce"
 
 class CodexEditorProvider implements vscode.CustomTextEditorProvider {
 
+	// DO NOT EDIT
 	public static register(context: vscode.ExtensionContext): vscode.Disposable {
 		const provider = new CodexEditorProvider(context)
 		return vscode.window.registerCustomEditorProvider(CodexEditorProvider.viewType, provider)
 	}
 
+	// DO NOT EDIT
 	private static readonly viewType = "catCustoms.catScratch"
 
+	// DO NOT EDIT
 	constructor(
 		private readonly context: vscode.ExtensionContext
 	) { }
