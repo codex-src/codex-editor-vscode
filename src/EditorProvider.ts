@@ -36,6 +36,8 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 		// Converts messages passed from the editor to VSCode;
 		// events are converted from messages to edits.
 		webviewPanel.webview.onDidReceiveMessage(e => {
+			// TODO: The editor can pass VDOM representation here,
+			// use state.data to write to edit.replace, and
 			const edit = new vscode.WorkspaceEdit()
 			edit.replace(
 				document.uri,
@@ -45,12 +47,18 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 				),
 				e.value,
 			)
+			// // TODO: Add try-catch statement here
+			// isSaving = true
 			vscode.workspace.applyEdit(edit)
+			// .then(saved => {
+			// 	isSaving = saved
+			// })
 		})
 
 		// Workspace subscription for document changes;
-		// propagates changes to shared editors (based on URI).
+		// propagates changes to shared documents.
 		const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
+			console.log(document)
 			if (e.document.uri.toString() !== document.uri.toString()) {
 				// No-op
 				return
@@ -62,8 +70,8 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 			changeDocumentSubscription.dispose()
 		})
 
-		// Invoke once; propgates state changes to background
-		// documents:
+		// Invoke once; propgate state changes to shared
+		// documents once:
 		updateWebview()
 	}
 
