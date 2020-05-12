@@ -2,29 +2,14 @@ import * as path from "path"
 import * as vscode from "vscode"
 import newNonce from "./nonce"
 
-/**
- * Provider for cat scratch editors.
- *
- * Cat scratch editors are used for `.cscratch` files, which are just json files.
- * To get started, run this extension and open an empty `.cscratch` file in VS Code.
- *
- * This provider demonstrates:
- *
- * - Setting up the initial webview for a custom editor.
- * - Loading scripts and styles in a custom editor.
- * - Synchronizing changes between a text document and a custom editor.
- */
-export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider {
+class CodexEditorProvider implements vscode.CustomTextEditorProvider {
 
 	public static register(context: vscode.ExtensionContext): vscode.Disposable {
-		const provider = new CatScratchEditorProvider(context)
-		const providerRegistration = vscode.window.registerCustomEditorProvider(CatScratchEditorProvider.viewType, provider)
-		return providerRegistration
+		const provider = new CodexEditorProvider(context)
+		return vscode.window.registerCustomEditorProvider(CodexEditorProvider.viewType, provider)
 	}
 
 	private static readonly viewType = "catCustoms.catScratch"
-
-	private static readonly scratchCharacters = ["😸", "😹", "😺", "😻", "😼", "😽", "😾", "🙀", "😿", "🐱"]
 
 	constructor(
 		private readonly context: vscode.ExtensionContext
@@ -133,3 +118,5 @@ export class CatScratchEditorProvider implements vscode.CustomTextEditorProvider
 		vscode.workspace.applyEdit(edit)
 	}
 }
+
+export default CodexEditorProvider

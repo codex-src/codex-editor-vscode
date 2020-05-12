@@ -1,7 +1,7 @@
-import * as vscode from 'vscode';
-import { CatScratchEditorProvider } from './catScratchEditor';
+import * as vscode from "vscode"
+import CodexEditorProvider from "./CodexEditorProvider"
 
 export function activate(context: vscode.ExtensionContext) {
 	// Register our custom editor providers
-	context.subscriptions.push(CatScratchEditorProvider.register(context));
+	context.subscriptions.push(CodexEditorProvider.register(context))
 }
