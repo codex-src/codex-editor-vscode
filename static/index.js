@@ -2,13 +2,14 @@
 	const vscode = acquireVsCodeApi()
 	const initialValue = vscode.getState()
 
-	const textarea = document.querySelector("textarea")
+	const contenteditable = document.querySelector("[contenteditable]")
 
 	// Sends messages to VSCode.
-	textarea.addEventListener("input", e => {
-		// TODO: postMessage needs to pass data; not cursors
-		// const { value, selectionStart, selectionEnd } = e.target
-		const { value: data } = e.target
+	contenteditable.addEventListener("input", e => {
+		// // TODO: postMessage needs to pass data; not cursors
+		// // const { value, selectionStart, selectionEnd } = e.target
+		// const { value: data } = e.target
+		const data = contenteditable.innerHTML
 		vscode.postMessage({
 			type: "input",
 			data,
@@ -17,32 +18,52 @@
 
 	// Consumes messages from VSCode.
 	window.addEventListener("message", e => {
-		// NOTE: Destructure e.data
 		const { data } = e.data
 
-		// TODO: Get nodes, pos1, and pos2 here
-		const { selectionStart, selectionEnd } = textarea
-		const resetPos = () => {
-			Object.assign(textarea, {
-				selectionStart,
-				selectionEnd,
-			})
-		}
+		// Returns a function that restores the cursors back to
+		// where they where.
+		const resetPos = (() => {
+			const selection = document.getSelection()
+			if (!selection.rangeCount) {
+				return null
+			}
+			const { anchorNode, anchorOffset, focusNode, focusOffset } = selection
+			const reset = () => {
+				const range = document.createRange()
+				range.setStart(contenteditable.childNodes[0], anchorOffset)
+				range.setEnd(contenteditable.childNodes[0], focusOffset)
+				selection.removeAllRanges()
+				selection.addRange(range)
+			}
+			return reset
+		})()
+
+		// // TODO: Get nodes, pos1, and pos2 here
+		// const { selectionStart, selectionEnd } = contenteditable
+		// const resetPos = () => {
+		// 	Object.assign(contenteditable, {
+		// 		selectionStart,
+		// 		selectionEnd,
+		// 	})
+		// }
 
 		// TODO (1): Compare e.data.split("\n") vs. nodes and
 		// mutate affected nodes. Pass nodes, pos1, and pos2
 		// back to the editor to re-render.
 		// TODO (2): Can use syncDOM strategy to mutate affected
 		// nodes
-		textarea.value = data
-		resetPos()
+		contenteditable.innerHTML = data
+		if (resetPos) {
+			resetPos()
+		}
 
 		vscode.setState(data)
 	})
 
 	if (!initialValue) {
-		textarea.focus()
+		contenteditable.focus()
 	} else {
-		textarea.value = initialValue
+		// contenteditable.value = initialValue
+		contenteditable.innerHTML = initialValue
 	}
 })()
