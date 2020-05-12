@@ -3,8 +3,8 @@
 	"displayName": "Cat Customs",
 	"description": "Custom Editor API Samples",
 	"version": "0.0.1",
-	"enableProposedApi": true,
-	"publisher": "vscode-samples",
+	"enableProposedApi": false,
+	"publisher": "codex-zaydek",
 	"engines": {
 		"vscode": "^1.44.0"
 	},
@@ -28,15 +28,6 @@
 				"selector": [
 					{
 						"filenamePattern": "*.cscratch"
-					}
-				]
-			},
-			{
-				"viewType": "catCustoms.pawDraw",
-				"displayName": "Paw Draw",
-				"selector": [
-					{
-						"filenamePattern": "*.pawdraw"
 					}
 				]
 			}
