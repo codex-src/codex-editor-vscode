@@ -88,7 +88,8 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 				<title>Codex Editor</title>
 			</head>
 			<body>
-				<textarea></textarea>
+				<!-- <textarea></textarea> -->
+				<div contenteditable>hello</div>
 				<script nonce="${nonceID}" src="${scriptURI}"></script>
 			</body>
 			</html>`
