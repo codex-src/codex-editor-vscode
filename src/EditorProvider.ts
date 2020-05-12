@@ -29,7 +29,7 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 		const updateWebview = () => {
 			webviewPanel.webview.postMessage({
 				type: "update",
-				value: document.getText(),
+				value: document.getText(), // TODO: Change value to data or text
 			})
 		}
 
