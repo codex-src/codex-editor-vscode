@@ -25,18 +25,25 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 		webviewPanel.webview.options = { enableScripts: true }
 		webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview)
 
+		let pos1 = 0
+		let pos2 = 0
+
 		// Sends an update-message.
-		const updateWebview = () => {
+		const updateWebview = ([pos1, pos2]: any) => {
 			webviewPanel.webview.postMessage({
 				type: "update",
 				data: document.getText(),
+				pos1,
+				pos2,
 			})
 		}
 
 		// Converts messages passed from the editor to VSCode;
 		// events are converted from messages to edits.
 		webviewPanel.webview.onDidReceiveMessage(e => {
-			const { data } = e
+			const { data, p1, p2 } = e
+			pos1 = p1
+			pos2 = p2
 
 			// TODO: The editor can pass VDOM representation here,
 			// use state.data to write to edit.replace, and
@@ -60,11 +67,13 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 		// Workspace subscription for document changes;
 		// propagates changes to shared documents.
 		const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(e => {
+			// console.log(e)
+
 			if (e.document.uri.toString() !== document.uri.toString()) {
 				// No-op
 				return
 			}
-			updateWebview()
+			updateWebview([pos1, pos2])
 		})
 		// Defer function for workspace subscription.
 		webviewPanel.onDidDispose(() => {
@@ -73,7 +82,7 @@ class EditorProvider implements vscode.CustomTextEditorProvider {
 
 		// Invoke once; propgate state changes to shared
 		// documents once:
-		updateWebview()
+		updateWebview([pos1, pos2])
 	}
 
 	// ReSturn static HTML.

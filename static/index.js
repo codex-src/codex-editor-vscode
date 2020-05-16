@@ -13,12 +13,15 @@
 		vscode.postMessage({
 			type: "input",
 			data,
+			p1: Date.now(),
+			p2: Date.now(),
 		})
 	})
 
 	// Consumes messages from VSCode.
 	window.addEventListener("message", e => {
-		const { data } = e.data
+		const { data, pos1, pos2 } = e.data
+		console.log(pos1, pos2)
 
 		// Returns a function that restores the cursors back to
 		// where they where.
