@@ -2,15 +2,10 @@ import { Webview, Uri } from "vscode";
 import { join } from "path";
 
 export function setupWebview(webview: Webview, staticPath: string): void {
-    webview.options = { enableScripts: true };
+	webview.options = { enableScripts: true };
 
-    /*const scriptURI = webview.asWebviewUri(
-        Uri.file(join(staticPath, "static", "index.js"))
-    );
-    const styleURI = webview.asWebviewUri(
-        Uri.file(join(staticPath, "static", "index.css"))
-    );*/
-    const html = `<!DOCTYPE html>
+	// TODO: Can use ?embed=1 or =true flag as an env variable
+	const html = `<!DOCTYPE html>
 	<html lang="en">
 	<head>
 		<meta charset="UTF-8">
@@ -23,12 +18,24 @@ export function setupWebview(webview: Webview, staticPath: string): void {
 			iframe { height: 100%; width: 100%; padding: 0; margin: 0; border: 0; display: block; }
 		</style>
 		<title>Codex Editor</title>
+		<script>
+			const api = window.VsCodeApi = acquireVsCodeApi();
+			window.addEventListener('message', event => {
+				const iframe = window.frames[0];
+				if (event.source === iframe) {
+					console.log("forward message: frame -> vscode", event.data);
+					api.postMessage(event.data);
+				} else {
+					console.log("forward message: vscode -> frame", event.data);
+					iframe.postMessage(event.data, "*");
+				}
+			});
+		</script>
 	</head>
 	<body>
-		<div contenteditable></div>
-		<iframe src="http://localhost:3000"></iframe>
+		<iframe src="http://localhost:3000?embed=true"></iframe>
 	</body>
     </html>`;
 
-    webview.html = html;
+	webview.html = html;
 }

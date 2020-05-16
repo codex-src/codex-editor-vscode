@@ -10,39 +10,50 @@ import {
     Position,
     workspace,
     Webview,
+    commands,
 } from "vscode";
 import { setupWebview } from "./setupWebview";
 
 
+type CodexAction = {
+    kind: "load";
+    markdown: string;
+} | {
+    kind: "update";
+};
+
+type CodexEvent = {
+    kind: "update";
+    newMarkdown: string;
+} | {
+    kind: "init";
+};
+
 export class EditorProvider implements CustomTextEditorProvider {
-    constructor(private readonly staticPath: string) {}
+    constructor(private readonly staticPath: string) { }
 
     public async resolveCustomTextEditor(
         document: TextDocument,
         webviewPanel: WebviewPanel,
         _token: CancellationToken
     ): Promise<void> {
+        function sendAction(action: CodexAction) {
+            webviewPanel.webview.postMessage(action);
+        }
+
+        webviewPanel.webview.onDidReceiveMessage((e: CodexEvent) => {
+            if (e.kind === "init") {
+                sendAction({
+                    kind: "load",
+                    markdown: document.getText()
+                })
+            }
+        });
+
         setupWebview(webviewPanel.webview, this.staticPath);
 
-        let pos1 = 0;
-        let pos2 = 0;
-
-        const updateWebview = ([pos1, pos2]: any) => {
-            webviewPanel.webview.postMessage({
-                type: "update",
-                data: document.getText(),
-                pos1,
-                pos2,
-            });
-        };
-
-        webviewPanel.webview.onDidReceiveMessage((e) => {
-            const { data, p1, p2 } = e;
-            pos1 = p1;
-            pos2 = p2;
-
-            // TODO: The editor can pass VDOM representation here,
-            // use state.data to write to edit.replace, and
+        let isSaving = false;
+        const update = async (newContent: string) => {
             const edit = new WorkspaceEdit();
             edit.replace(
                 document.uri,
@@ -50,36 +61,24 @@ export class EditorProvider implements CustomTextEditorProvider {
                     new Position(0, 0),
                     new Position(document.lineCount, 0)
                 ),
-                data
+                newContent
             );
-            // // TODO: Add try-catch statement here
-            // isSaving = true
-            workspace.applyEdit(edit);
-            // .then(saved => {
-            // 	isSaving = saved
-            // })
-        });
+
+            isSaving = true;
+            await workspace.applyEdit(edit);
+            isSaving = false;
+        }
 
         // Workspace subscription for document changes;
         // propagates changes to shared documents.
         const changeDocumentSubscription = workspace.onDidChangeTextDocument(
             (e) => {
-                // console.log(e)
-
                 if (e.document.uri.toString() !== document.uri.toString()) {
-                    // No-op
                     return;
                 }
-                updateWebview([pos1, pos2]);
+
             }
         );
-        // Defer function for workspace subscription.
-        webviewPanel.onDidDispose(() => {
-            changeDocumentSubscription.dispose();
-        });
 
-        // Invoke once; propgate state changes to shared
-        // documents once:
-        updateWebview([pos1, pos2]);
     }
 }
