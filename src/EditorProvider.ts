@@ -13,6 +13,7 @@ import {
 } from "vscode";
 import { setupWebview } from "./setupWebview";
 
+
 export class EditorProvider implements CustomTextEditorProvider {
     constructor(private readonly staticPath: string) {}
 
