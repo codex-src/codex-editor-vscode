@@ -1,0 +1,81 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\yarn\bin\yarn.js
+
+PATH: 
+  C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\dotnet\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\PuTTY\;C:\Program Files\Gource\cmd;C:\Program Files\Microsoft Network Monitor 3\;C:\Program Files\LLVM\bin;C:\ProgramData\chocolatey\bin;C:\Program Files\Git\cmd;C:\Users\henni\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\dotnet\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\PuTTY\;C:\Program Files\Gource\cmd;C:\Program Files\Microsoft Network Monitor 3\;C:\Program Files (x86)\Yarn\bin\;C:\Program Files\LLVM\bin;C:\ProgramData\chocolatey\bin;C:\Program Files\Git\cmd;C:\Users\henni\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Users\henni\.windows-build-tools\python27\;C:\sdks\tizen\tools\ide\bin;C:\Users\henni\AppData\Local\Programs\Python\Python35-32\Scripts\;C:\Users\henni\AppData\Local\Programs\Python\Python35-32\;C:\Users\henni\AppData\Local\Programs\Python\Python35\Scripts\;C:\Users\henni\AppData\Local\Programs\Python\Python35\;C:\Users\henni\.cargo\bin;C:\Users\henni\AppData\Local\Microsoft\WindowsApps;C:\Users\henni\AppData\Local\Programs\MiKTeX 2.9\miktex\bin\x64\;C:\Users\henni\AppData\Local\Programs\Fiddler;C:\Users\henni\AppData\Roaming\npm;C:\apps\php;C:\Users\henni\.dotnet\tools;C:\Users\henni\apps\gsudo;C:\Users\henni\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\GitHub CLI\
+
+Yarn version: 
+  1.22.4
+
+Node version: 
+  12.10.0
+
+Platform: 
+  win32 x64
+
+Trace: 
+  SyntaxError: S:\dev\2020\codex-editor-vscode\package.json: Unexpected token ] in JSON at position 320
+      at JSON.parse (<anonymous>)
+      at C:\Users\henni\AppData\Roaming\nvm\v12.10.0\node_modules\yarn\lib\cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (C:\Users\henni\AppData\Roaming\nvm\v12.10.0\node_modules\yarn\lib\cli.js:310:30)
+      at C:\Users\henni\AppData\Roaming\nvm\v12.10.0\node_modules\yarn\lib\cli.js:321:13
+
+npm manifest: 
+  {
+  	"name": "cat-customs",
+  	"displayName": "WYSIWYG markdown editor (getcodex.dev)",
+  	"description": "",
+  	"version": "0.0.1",
+  	"enableProposedApi": false,
+  	"publisher": "codex-zaydek",
+  	"engines": {
+  		"vscode": "^1.44.0"
+  	},
+  	"categories": [
+  		"Other"
+  	],
+  	"activationEvents": [
+  		"onCustomEditor:codex-v0-1-editor.md",
+  	],
+  	"repository": {
+  		"type": "git",
+  		"url": "https://github.com/microsoft/vscode-extension-samples.git"
+  	},
+  	"main": "./out/extension.js",
+  	"contributes": {
+  		"customEditors": [
+  			{
+  				"viewType": "codex-v0-1-editor.md",
+  				"displayName": "Codex Editor",
+  				"selector": [
+  					{
+  						"filenamePattern": "*.md"
+  					},
+  					{
+  						"filenamePattern": "*.markdown"
+  					}
+  				]
+  			}
+  		]
+  	},
+  	"scripts": {
+  		"vscode:prepublish": "npm run compile",
+  		"compile": "tsc -p ./",
+  		"lint": "tslint -p ./",
+  		"watch": "tsc -w -p ./"
+  	},
+  	"dependencies": {},
+  	"devDependencies": {
+  		"@types/node": "^12.12.0",
+  		"@types/vscode": "^1.44.0",
+  		"tslint": "^5.19.0",
+  		"typescript": "^3.8.3"
+  	}
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

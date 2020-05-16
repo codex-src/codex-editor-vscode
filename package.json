@@ -1,51 +1,51 @@
 {
-	"name": "cat-customs",
-	"displayName": "WYSIWYG markdown editor (getcodex.dev)",
-	"description": "",
-	"version": "0.0.1",
-	"enableProposedApi": false,
-	"publisher": "codex-zaydek",
-	"engines": {
-		"vscode": "^1.44.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCustomEditor:codex-v0-1-editor.md",
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/microsoft/vscode-extension-samples.git"
-	},
-	"main": "./out/extension.js",
-	"contributes": {
-		"customEditors": [
-			{
-				"viewType": "codex-v0-1-editor.md",
-				"displayName": "Codex Editor",
-				"selector": [
-					{
-						"filenamePattern": "*.md"
-					},
-					{
-						"filenamePattern": "*.markdown"
-					}
-				]
-			}
-		]
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"lint": "tslint -p ./",
-		"watch": "tsc -w -p ./"
-	},
-	"dependencies": {},
-	"devDependencies": {
-		"@types/node": "^12.12.0",
-		"@types/vscode": "^1.44.0",
-		"tslint": "^5.19.0",
-		"typescript": "^3.8.3"
-	}
+    "name": "cat-customs",
+    "displayName": "WYSIWYG markdown editor (getcodex.dev)",
+    "description": "",
+    "version": "0.0.1",
+    "enableProposedApi": false,
+    "publisher": "codex-zaydek",
+    "engines": {
+        "vscode": "^1.44.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCustomEditor:codex-v0-1-editor.md"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/microsoft/vscode-extension-samples.git"
+    },
+    "main": "./out/extension.js",
+    "contributes": {
+        "customEditors": [
+            {
+                "viewType": "codex-v0-1-editor.md",
+                "displayName": "Codex Editor",
+                "selector": [
+                    {
+                        "filenamePattern": "*.md"
+                    },
+                    {
+                        "filenamePattern": "*.markdown"
+                    }
+                ]
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "lint": "tslint -p ./",
+        "watch": "tsc -w -p ./"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@types/node": "^12.12.0",
+        "@types/vscode": "^1.44.0",
+        "tslint": "^5.19.0",
+        "typescript": "^3.8.3"
+    }
 }
